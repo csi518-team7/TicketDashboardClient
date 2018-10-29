@@ -1,10 +1,15 @@
 <mat-card>
-  <mat-card-header>
+  <mat-card-header>Ticket List</mat-card-header>
+  <mat-card-content>
     <mat-list>
       <mat-list-item *ngFor="let ticket of tickets">
         <img mat-list-avatar src="{{ticket.giphyUrl}}" alt="{{ticket.name}}">
-        <h3 mat-line>{{ticket.name}}</h3>
+        <h3 mat-line>
+          <a mat-button [routerLink]="['/ticket-edit', ticket.id]">{{ticket.name}}</a>
+        </h3>
       </mat-list-item>
     </mat-list>
-  </mat-card-header>
+  </mat-card-content>
+
+  <button mat-fab color="primary" [routerLink]="['/ticket-add']">Add</button>
 </mat-card>
