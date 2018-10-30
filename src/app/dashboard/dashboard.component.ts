@@ -2,15 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { OktaAuthService } from '@okta/okta-angular';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  selector: 'app-dashboard',
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.css']
 })
-export class AppComponent implements OnInit {
-  title = 'client';
+export class DashboardComponent implements OnInit {
   isAuthenticated: boolean;
 
-  constructor(public oktaAuth: OktaAuthService) {
+  constructor(private oktaAuth: OktaAuthService) {
   }
 
   async ngOnInit() {

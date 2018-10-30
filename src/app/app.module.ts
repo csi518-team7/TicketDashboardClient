@@ -7,15 +7,25 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
 
 import { AppComponent } from './app.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TicketService } from './shared/ticket/ticket.service';
 import { TicketListComponent } from './ticket-list/ticket-list.component';
 import { GiphyService } from './shared/giphy/giphy.service';
 import { TicketEditComponent } from './ticket-edit/ticket-edit.component';
 
+// Okta callback component
+import { OktaCallbackComponent, OktaAuthModule } from '@okta/okta-angular';
+// Bearer token to HTTP requests
+import { AuthInterceptor } from './shared/okta/auth.interceptor';
+import { DashboardComponent } from './dashboard/dashboard.component';
+
 // Routes might move out to a single route file latter
 const appRoutes: Routes = [
-  {path: '', redirectTo: '/ticket-list', pathMatch: 'full'},
+  {path: '', redirectTo: '/dashboard', pathMatch: 'full'},
+  {
+    path: 'dashboard',
+    component: DashboardComponent
+  },
   {
     path: 'ticket-list',
     component: TicketListComponent
@@ -27,15 +37,26 @@ const appRoutes: Routes = [
   {
     path: 'ticket-edit/:id',
     component: TicketEditComponent
+  },
+  {
+    path: 'implicit/callback',
+    component: OktaCallbackComponent
   }
 ];
 
+// Okta API config
+const config = {
+  issuer: 'https://dev-891348.oktapreview.com/oauth2/default',
+  redirectUri: 'http://localhost:4200/implicit/callback',
+  clientId: '0oah218c233ttuzLZ0h7'
+};
 
 @NgModule({
   declarations: [
     AppComponent,
     TicketListComponent,
-    TicketEditComponent
+    TicketEditComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,
@@ -47,9 +68,11 @@ const appRoutes: Routes = [
     MatListModule,
     MatToolbarModule,
     FormsModule,
-    RouterModule.forRoot(appRoutes)
+    RouterModule.forRoot(appRoutes),
+    OktaAuthModule.initAuth(config)
   ],
-  providers: [TicketService, GiphyService],
+  providers: [TicketService, GiphyService,
+              {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
